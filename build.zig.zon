@@ -2,6 +2,7 @@
     .name = .freetype,
     .version = "2.13.3",
     .minimum_zig_version = "0.15.0-dev.666+c04be630d",
+    .fingerprint = 0xac2059b61a0ba081,
     .dependencies = .{},
     .paths = .{
         "build.zig",
