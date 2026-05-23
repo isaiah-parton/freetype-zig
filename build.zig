@@ -65,11 +65,11 @@ pub fn build(b: *std.Build) !void {
             "-fno-sanitize=undefined",
         },
     });
-    freetype.addIncludePath(b.path("include/"));
+    freetype.root_module.addIncludePath(b.path("include/"));
     freetype.installHeadersDirectory(b.path("include/"), "", .{});
     b.installArtifact(freetype);
     switch (target.result.os.tag) {
-        .emscripten => freetype.addIncludePath(.{
+        .emscripten => freetype.root_module.addIncludePath(.{
             .cwd_relative = b.pathJoin(&.{ b.sysroot orelse @panic("emscripten sysroot not set"), "/include" }),
         }),
         .macos => {
@@ -95,9 +95,11 @@ pub fn build(b: *std.Build) !void {
     const test_step = b.step("test", "Run freetype tests");
     const tests = b.addTest(.{
         .name = "freetype-tests",
-        .root_source_file = b.path("src/freetype.zig"),
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.addModule("freetype-tests", .{
+            .root_source_file = b.path("src/freetype.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
     });
     b.installArtifact(tests);
     test_step.dependOn(&b.addRunArtifact(tests).step);
